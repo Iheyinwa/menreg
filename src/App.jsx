@@ -105,10 +105,10 @@ function App() {
     console.log("Error Submitting information: ", errors);
   }
 
-  const paystackKey = import.meta.env.VITE_PUBLIC_KEY
+  // const paystackKey = import.meta.env.VITE_PUBLIC_KEY
   const paystack = new PaystackPop();
   paystack.newTransaction({
-    key: paystackKey,
+    key: "pk_test_329bae1515829f5cc3ecb279536da5476e395dda",
     email: cleanedData.email,
     amount: totalAmount * 100,
 
