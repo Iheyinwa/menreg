@@ -14,13 +14,18 @@ import PaystackPop from "@paystack/inline-js";
 import { FaSpinner } from "react-icons/fa6";
 import { districts } from "./data/districts.js";
 import { hotelAccommodations } from "./data/hotels.js";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // name schema
 const schema = yup.object().shape({
   surname: yup.string().required("Your Surname is required"),
   firstName: yup.string().required("Your First Name is required"),
   otherName: yup.string().required("Your Other Name(s) is required"),
-  email: yup.string().email("Invalid email format").required("Your Email is required"),
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .required("Your Email is required"),
   whatsappNumber: yup.string().required("Your Whatsapp Number is required"),
   gsm1: yup.string().required("Your GSM1 is required"),
   gsm2: yup.string().nullable(),
@@ -43,12 +48,6 @@ function App() {
     formState: { errors, isValid},
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {
-      surname: "",
-      firstName: "",
-      otherName: "",
-      email: ""
-    }
   });
 
   // const [count, setCount ] = useState(0)
@@ -83,69 +82,53 @@ function App() {
   };
 
   // Create a new data object with only the necessary values
+  
+
+  setIsSubmitting(true);
+
   const cleanedData = {
     ...data,
     AGChapter: agChapterValue,
     accommodation: accommodationValue,
     registration: registrationValue,
+    Payment: "Successful",
   };
-  
 
-  // console.log("Cleaned data:", cleanedData);
-
-  // Proceed with the cleaned data
-  setIsSubmitting(true);
-
-  try {
-    const userDataRef = await addDoc(collection(db, "userData"), {
-      userData: cleanedData,
-    });
-    console.log("User Data written with ID: ", userDataRef);
-  } catch (e) {
-    console.log("Error Submitting information: ", errors);
-  }
-
-  // const paystackKey = import.meta.env.VITE_PUBLIC_KEY
+  const paystackKey = import.meta.env.VITE_PUBLIC_KEY
   const paystack = new PaystackPop();
   paystack.newTransaction({
-    key: "pk_test_329bae1515829f5cc3ecb279536da5476e395dda",
-    email: cleanedData.email,
+    key: paystackKey,
+    email: data.email,
     amount: totalAmount * 100,
 
-    onSuccess: () => {
-      setIsSubmitting(false);
+    onSuccess: async () => {
+      try {
+        const userDataRef = await addDoc(collection(db, "userData"), {
+          userData: cleanedData,
+        });
+        console.log("User Data written with ID: ", userDataRef.id);
+        toast.success("Payment was successful and your form was submitted!");
+        reset(); // Reset the form only after successful submission
+      } catch (e) {
+        console.error("Error submitting information: ", e);
+        toast.error("Error submitting your data after payment.");
+      } finally {
+        setIsSubmitting(false);
+      }
     },
     onCancel: () => {
       setIsSubmitting(false);
+      toast.error("Payment was canceled and your form was not submitted!");
     },
   });
   reset();
   };
 
-  // useEffect(() => {
-  //   const subscription = watch((value, { name}) => {
-  //     if (name === 'surname' || name === 'firstName' || name === 'otherName' || name === 'email') {
-  //       const allValid = schema.isValidSync({
-  //         surname: value.surname,
-  //         firstName: value.firstName,
-  //         otherName: value.otherName,
-  //         email: value.email
-  //       });
-  //       console.log(value.surname)
-  //       if (allValid) {
-  //         setNames(1);
-  //         setCount(prevCount => prevCount + 1);
-  //       } else {
-  //         setNames(0);
-  //       }
-  //     }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
 
 
   return (
     <section>
+      <ToastContainer />
       <section className="flex justify-center items-center">
         <section className="w-[80%] md:w-[60vw]">
           <h1 className="text-center text-2xl font-bold my-2">
@@ -167,17 +150,6 @@ function App() {
                       Registration of Participants
                     </h2>
                   </div>
-                  {/* <div className="inline-flex gap-2 items-center">
-                    <input
-                      type="range"
-                      id="taskProgress"
-                      min="0"
-                      max="5"
-                      value={count}
-                      className="w-fit"
-                    />
-                    <p>{count} of 5 tasks</p>
-                  </div> */}
                 </div>
                 <div className="my-2">
                   <p className="underline">For more information contact</p>
@@ -190,9 +162,7 @@ function App() {
 
               <section className="max-h-[70vh] overflow-y-auto my-4">
                 {/* NAMES */}
-                <InputCard
-                  tag="Names"
-                >
+                <InputCard tag="Names">
                   <InputField
                     type="text"
                     title="Surname: "
@@ -276,24 +246,28 @@ function App() {
                   {isAg !== null && (
                     <>
                       {isAg ? (
-                        <Controller
-                          name="AGChapter"
-                          className="my-2"
-                          control={control}
-                          render={({ field }) => (
-                            <Select
-                              {...field}
-                              options={districts}
-                              placeholder="Select your AG Chapter"
-                            />
-                          )}
-                        />
+                        <>
+                          <Controller
+                            name="AGChapter"
+                            className="my-2"
+                            control={control}
+                            render={({ field }) => (
+                              <Select
+                                {...field}
+                                options={districts}
+                                placeholder="Select your AG Chapter"
+                              />
+                            )}
+                          />
+                        </>
                       ) : (
-                        <InputField
-                          type="text"
-                          props={{ ...register("church") }}
-                          title="Please indicate your church organization"
-                        />
+                        <>
+                          <InputField
+                            type="text"
+                            props={{ ...register("church") }}
+                            title="Please indicate your church organization"
+                          />
+                        </>
                       )}
                     </>
                   )}
@@ -420,7 +394,7 @@ function App() {
                             <Select
                               {...field}
                               options={hotelAccommodations}
-                              value=""
+                              value={selectedHotel}
                               placeholder="Select your Hotel of Choice"
                               onChange={(selectedOption) => {
                                 field.onChange(selectedOption);
