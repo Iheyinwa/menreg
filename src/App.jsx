@@ -30,13 +30,13 @@ const schema = yup.object().shape({
   gsm1: yup.string().required("Your GSM1 is required"),
   gsm2: yup.string().nullable(),
   isAg: yup.boolean().required("Please indicate if you are an AG member"),
-  membership: yup.string().required("Please choose your Membership Status"),
+  membership: yup.string().required("Please choose your membership status"),
   accommodation: yup.object().shape({
-    value: yup.string().required("Please select your preferred Accommodation"),
+    value: yup.string().required("Please select your preferred accommodation"),
   }),
   registration: yup
     .string()
-    .required("Please select your Registration package"),
+    .required("Please select your registration package"),
 });
 
 function App() {
@@ -72,7 +72,7 @@ function App() {
   console.log("Original data:", data);
 
   // Extract the value from the AGChapter select
-  const agChapterValue = data.AGChapter?.value;
+  const agDistrictValue = data.AGDistrict?.value;
   const accommodationValue = {
     value: data.accommodation?.value,
   };
@@ -88,7 +88,7 @@ function App() {
 
   const cleanedData = {
     ...data,
-    AGChapter: agChapterValue,
+    AGDistrict: agDistrictValue,
     accommodation: accommodationValue,
     registration: registrationValue,
     Payment: "Successful",
@@ -226,7 +226,7 @@ function App() {
                         {...register("isAg")}
                         onClick={() => setIsAg(true)}
                       />
-                      <label htmlFor="agYes" className="px-1">
+                      <label htmlFor="agYes" className="px-2">
                         Yes
                       </label>
                     </div>
@@ -238,7 +238,7 @@ function App() {
                         {...register("isAg")}
                         onClick={() => setIsAg(false)}
                       />
-                      <label htmlFor="agNo" className="px-1">
+                      <label htmlFor="agNo" className="px-2">
                         No
                       </label>
                     </div>
@@ -248,14 +248,14 @@ function App() {
                       {isAg ? (
                         <>
                           <Controller
-                            name="AGChapter"
+                            name="AGDistrict"
                             className="my-2"
                             control={control}
                             render={({ field }) => (
                               <Select
                                 {...field}
                                 options={districts}
-                                placeholder="Select your AG Chapter"
+                                placeholder="Select your AG District"
                               />
                             )}
                           />
@@ -287,7 +287,7 @@ function App() {
                         value="Pastor"
                         {...register("membership")}
                       />
-                      <label htmlFor="Pastor" className="px-1">
+                      <label htmlFor="Pastor" className="px-2">
                         Minister (Pastor)
                       </label>
                     </div>
@@ -312,7 +312,7 @@ function App() {
                         value="Non AG"
                         {...register("membership")}
                       />
-                      <label htmlFor="Non AG" className="px-1">
+                      <label htmlFor="Non AG" className="px-2">
                         Non AG (but wish to attend)
                       </label>
                     </div>
@@ -340,7 +340,7 @@ function App() {
                         value="Hostel"
                         {...register("accommodation.value")}
                       />
-                      <label htmlFor="hostel" className="px-1">
+                      <label htmlFor="hostel" className="px-2">
                         Hostel
                       </label>
                     </div>
@@ -349,10 +349,10 @@ function App() {
                         <div className="my-2">
                           <h3 className="font-semibold">Hostel Details:</h3>
                           <p>
-                            Open Halls @ 7k only throughout the Convention
+                            Open Halls @ ₦7,000 only throughout the Convention
                             period include churches and hostels. Provision of
                             Electricity, Foam and pillow, security and
-                            sanitation{" "}
+                            sanitation.
                           </p>
                         </div>
                         <hr />
@@ -379,7 +379,7 @@ function App() {
                         name="accommodation"
                         {...register("accommodation.value")}
                       />
-                      <label htmlFor="hotel" className="px-1">
+                      <label htmlFor="hotel" className="px-2">
                         Hotel
                       </label>
                     </div>
@@ -438,7 +438,7 @@ function App() {
                         value="Personal Arrangement"
                         {...register("accommodation.value")}
                       />
-                      <label htmlFor="Personal Arrangement" className="px-1">
+                      <label htmlFor="Personal Arrangement" className="px-2">
                         Personal Arrangement
                       </label>
                     </div>
@@ -467,7 +467,7 @@ function App() {
                         value="Regular"
                         {...register("registration")}
                       />
-                      <label htmlFor="regularReg" className="px-1">
+                      <label htmlFor="regularReg" className="px-2">
                         Regular
                       </label>
                     </div>
@@ -475,7 +475,7 @@ function App() {
                       <>
                         <div className="my-2">
                           <h3 className="font-semibold">Regular Package:</h3>
-                          <p className="font-medium">Price: #5,000</p>
+                          <p className="font-medium">Price: ₦5,000</p>
                           <p className="font-medium">
                             Content: Conference File Jacket
                           </p>
@@ -498,7 +498,7 @@ function App() {
                         name="registration"
                         {...register("registration")}
                       />
-                      <label htmlFor="hotelReg" className="px-1">
+                      <label htmlFor="hotelReg" className="px-2">
                         Hotel
                       </label>
                     </div>
@@ -506,7 +506,7 @@ function App() {
                       <>
                         <div className="my-2">
                           <h3 className="font-semibold">Hotel Package:</h3>
-                          <p className="font-medium">Price: #50,000</p>
+                          <p className="font-medium">Price: ₦50,000</p>
                           <p className="font-medium">
                             Content: Conference Souvenir Bag/Wears/Materials,
                             file etc
