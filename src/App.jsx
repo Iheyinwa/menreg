@@ -21,15 +21,13 @@ import "react-toastify/dist/ReactToastify.css";
 const schema = yup.object().shape({
   surname: yup.string().required("Your Surname is required"),
   firstName: yup.string().required("Your First Name is required"),
-  otherName: yup.string().required("Your Other Name(s) is required"),
+  otherName: yup.string(),
   email: yup
     .string()
     .email("Invalid email format")
     .required("Your Email is required"),
-  whatsappNumber: yup.string().required("Your Whatsapp Number is required"),
-  gsm1: yup.string().required("Your GSM1 is required"),
+  gsm1: yup.string().required("Your GSM1 (Whatsapp Number) is required"),
   gsm2: yup.string().nullable(),
-  isAg: yup.boolean().required("Please indicate if you are an AG member"),
   membership: yup.string().required("Please choose your membership status"),
   accommodation: yup.object().shape({
     value: yup.string().required("Please select your preferred accommodation"),
@@ -52,7 +50,9 @@ function App() {
 
   // const [count, setCount ] = useState(0)
   // const [names, setNames ] = useState(0)
-  const [isAg, setIsAg] = useState(null);
+  const [isMinister, setIsMinister] = useState(false);
+  const [isMember, setIsMember] = useState(false);
+  const [isNonAG, setIsNonAG] = useState(false);
   const [hotel, setHotel] = useState(false);
   const [hostel, setHostel] = useState(false);
   const [regular, setRegular] = useState(false);
@@ -72,7 +72,7 @@ function App() {
   console.log("Original data:", data);
 
   // Extract the value from the AGChapter select
-  const agDistrictValue = data.AGDistrict?.value;
+  const agDistrictValue = data.AGDistrict?.value || "none";
   const accommodationValue = {
     value: data.accommodation?.value,
   };
@@ -93,6 +93,8 @@ function App() {
     registration: registrationValue,
     Payment: "Successful",
   };
+
+  console.log(cleanedData)
 
   const paystackKey = import.meta.env.VITE_PUBLIC_KEY
   const paystack = new PaystackPop();
@@ -179,7 +181,7 @@ function App() {
                   )}
                   <InputField
                     type="text"
-                    title="Other(s) Name: "
+                    title="Other(s) Name (optional):  "
                     props={{ ...register("otherName") }}
                   />
                   {errors.otherName && (
@@ -189,7 +191,9 @@ function App() {
                     type="email"
                     title="Email: "
                     props={{ ...register("email") }}
+                    note="Please provide a valid email. In absence of a valid email, input agmensministries@gmail.com"
                   />
+
                   {errors.email && <Error error={errors.email.message} />}
                 </InputCard>
 
@@ -197,125 +201,114 @@ function App() {
                 <InputCard tag="Contacts">
                   <InputField
                     type="tel"
-                    title="Whatsapp Number: "
-                    props={{ ...register("whatsappNumber") }}
-                  />
-                  {errors.whatsappNumber && (
-                    <Error error={errors.whatsappNumber.message} />
-                  )}
-                  <InputField
-                    type="tel"
-                    title="GSM1: "
+                    title="GSM1(Whatsapp Number): "
                     props={{ ...register("gsm1") }}
+                    note="In absence of a whatsapp number, please input 08133164446"
                   />
                   {errors.gsm1 && <Error error={errors.gsm1.message} />}
                   <InputField
                     type="tel"
-                    title="GSM2: "
+                    title="GSM2 (optional): "
                     props={{ ...register("gsm2") }}
                   />
                   {errors.gsm2 && <Error error={errors.gsm2.message} />}
-                  <div>
-                    <p className="text-[14px] font-semibold">
-                      Are you an AG Member?
-                    </p>
-                    <div className="my-1">
-                      <input
-                        type="radio"
-                        value="true"
-                        {...register("isAg")}
-                        onClick={() => setIsAg(true)}
-                      />
-                      <label htmlFor="agYes" className="px-2">
-                        Yes
-                      </label>
-                    </div>
-
-                    <div className="my-1">
-                      <input
-                        type="radio"
-                        value="false"
-                        {...register("isAg")}
-                        onClick={() => setIsAg(false)}
-                      />
-                      <label htmlFor="agNo" className="px-2">
-                        No
-                      </label>
-                    </div>
-                  </div>
-                  {isAg !== null && (
-                    <>
-                      {isAg ? (
-                        <>
-                          <Controller
-                            name="AGDistrict"
-                            className="my-2"
-                            control={control}
-                            render={({ field }) => (
-                              <Select
-                                {...field}
-                                options={districts}
-                                placeholder="Select your AG District"
-                              />
-                            )}
-                          />
-                        </>
-                      ) : (
-                        <>
-                          <InputField
-                            type="text"
-                            props={{ ...register("church") }}
-                            title="Please indicate your church organization"
-                          />
-                        </>
-                      )}
-                    </>
-                  )}
-                  {errors.isAg && <Error error={errors.isAg.message} />}
                 </InputCard>
 
                 {/* MEMBERSHIP */}
                 <InputCard tag="Membership Status">
                   <div className="my-2">
-                    <p className="text-[14px] font-semibold">
+                    <p className="text-[16px] font-semibold">
                       What is your membership status in the Men&apos;s
                       Ministries?
                     </p>
                     <div className="my-1">
                       <input
                         type="radio"
-                        value="Pastor"
+                        value="AG Member and Minister"
                         {...register("membership")}
+                        onClick={() => {
+                          setIsMinister(true);
+                          setIsMember(false);
+                          setIsNonAG(false);
+                        }}
                       />
-                      <label htmlFor="Pastor" className="px-2">
-                        Minister (Pastor)
+                      <label htmlFor="AG Member and Minister" className="px-2">
+                        AG Member and Minister
                       </label>
                     </div>
-
+                    {isMinister && (
+                      <>
+                        <Controller
+                          name="AGDistrict"
+                          className="my-2"
+                          defaultValue={""}
+                          control={control}
+                          render={({ field }) => (
+                            <Select
+                              {...field}
+                              options={districts}
+                              placeholder="Select your AG District"
+                            />
+                          )}
+                        />
+                      </>
+                    )}
                     <div className="my-1">
                       <input
                         type="radio"
-                        value="Non Pastoral (layPerson)"
+                        value="AG Member"
                         {...register("membership")}
+                        onClick={() => {
+                          setIsMinister(false);
+                          setIsMember(true);
+                          setIsNonAG(false);
+                        }}
                       />
-                      <label
-                        htmlFor="Non Pastoral (layPerson)"
-                        className="px-1"
-                      >
-                        Non Pastoral (LayPerson)
+                      <label htmlFor="AG Member" className="px-1">
+                        AG Member
                       </label>
                     </div>
-
+                    {isMember && (
+                      <>
+                        <Controller
+                          name="AGDistrict"
+                          className="my-2"
+                          control={control}
+                          defaultValue={""}
+                          render={({ field }) => (
+                            <Select
+                              {...field}
+                              options={districts}
+                              placeholder="Select your AG District"
+                            />
+                          )}
+                        />
+                      </>
+                    )}
                     <div className="my-1">
                       <input
                         type="radio"
                         value="Non AG"
                         {...register("membership")}
+                        onClick={() => {
+                          setIsMinister(false);
+                          setIsMember(false);
+                          setIsNonAG(true);
+                        }}
                       />
                       <label htmlFor="Non AG" className="px-2">
                         Non AG (but wish to attend)
                       </label>
                     </div>
+                    {isNonAG && (
+                      <>
+                        <InputField
+                          type="text"
+                          props={{ ...register("church") }}
+                          title="Please indicate your church organization"
+                        />
+                      </>
+                    )}
                   </div>
                   {errors.membership && (
                     <Error error={errors.membership.message} />
@@ -325,7 +318,7 @@ function App() {
                 {/* ACCOMMODATION */}
                 <InputCard tag="Accommodation">
                   <div className="my-2">
-                    <p className="text-[14px] font-semibold">
+                    <p className="text-[16px] font-semibold">
                       What type of accommodation do you want?
                     </p>
                     <div
@@ -347,8 +340,10 @@ function App() {
                     {hostel && (
                       <>
                         <div className="my-2">
-                          <h3 className="font-semibold">Hostel Details:</h3>
-                          <p>
+                          <h3 className="font-normal italic">
+                            Hostel Details:
+                          </h3>
+                          <p className="italic">
                             Open Halls @ ₦7,000 only throughout the Convention
                             period include churches and hostels. Provision of
                             Electricity, Foam and pillow, security and
@@ -357,11 +352,13 @@ function App() {
                         </div>
                         <hr />
                         <div className="my-2">
-                          <p className="underline">Payment for Accommodation</p>
-                          <p>LOC Account Details</p>
-                          <p className="font-medium">Archibong Ekong</p>
-                          <p className="font-medium">Fidelity Bank</p>
-                          <p className="font-medium">6230493752</p>
+                          <p className="underline italic">
+                            Payment for Accommodation
+                          </p>
+                          <p className="italic">LOC Account Details</p>
+                          <p className="font-normal italic">Archibong Ekong</p>
+                          <p className="font-normal italic">Fidelity Bank</p>
+                          <p className="font-normal italic">6230493752</p>
                         </div>
                       </>
                     )}
@@ -390,6 +387,7 @@ function App() {
                           name="accommodation"
                           control={control}
                           className="my-2"
+                          defaultValue={""}
                           render={({ field }) => (
                             <Select
                               {...field}
@@ -406,20 +404,26 @@ function App() {
                         {selectedHotel && (
                           <>
                             <div className="my-2">
-                              <h3 className="font-semibold">
+                              <h3 className="font-normal italic">
                                 Selected Hotel Description:
                               </h3>
-                              <p>{selectedHotel.description}</p>
+                              <p className="italic">
+                                {selectedHotel.description}
+                              </p>
                             </div>
                             <hr />
                             <div className="my-2">
-                              <p className="underline">
+                              <p className="underline italic">
                                 Payment for Accommodation
                               </p>
-                              <p>LOC Account Details</p>
-                              <p className="font-medium">Archibong Ekong</p>
-                              <p className="font-medium">Fidelity Bank</p>
-                              <p className="font-medium">6230493752</p>
+                              <p className="italic">LOC Account Details</p>
+                              <p className="font-normal italic">
+                                Archibong Ekong
+                              </p>
+                              <p className="font-normal italic">
+                                Fidelity Bank
+                              </p>
+                              <p className="font-normal italic">6230493752</p>
                             </div>
                           </>
                         )}
@@ -451,7 +455,7 @@ function App() {
                 {/* REGISTRATION */}
                 <InputCard tag="Registration">
                   <div className="my-2">
-                    <p className="text-[14px] font-semibold">
+                    <p className="text-[16px] font-semibold">
                       What type of registration do you want?
                     </p>
                     <div
@@ -474,9 +478,11 @@ function App() {
                     {regular && (
                       <>
                         <div className="my-2">
-                          <h3 className="font-semibold">Regular Package:</h3>
-                          <p className="font-medium">Price: ₦5,000</p>
-                          <p className="font-medium">
+                          <h3 className="font-normal italic">
+                            Regular Package:
+                          </h3>
+                          <p className="font-normal italic">Price: ₦5,000</p>
+                          <p className="font-normal italic">
                             Content: Conference File Jacket
                           </p>
                         </div>
@@ -493,21 +499,23 @@ function App() {
                     >
                       <input
                         type="radio"
-                        id="hotelReg"
-                        value="Hotel"
+                        id="executiveReg"
+                        value="Executive"
                         name="registration"
                         {...register("registration")}
                       />
-                      <label htmlFor="hotelReg" className="px-2">
-                        Hotel
+                      <label htmlFor="Executive" className="px-2">
+                        Executive
                       </label>
                     </div>
                     {hotelReg && (
                       <>
                         <div className="my-2">
-                          <h3 className="font-semibold">Hotel Package:</h3>
-                          <p className="font-medium">Price: ₦50,000</p>
-                          <p className="font-medium">
+                          <h3 className="font-normal italic">
+                            Executive Package:
+                          </h3>
+                          <p className="font-normal italic">Price: ₦15,000</p>
+                          <p className="font-normal italic">
                             Content: Conference Souvenir Bag/Wears/Materials,
                             file etc
                           </p>
