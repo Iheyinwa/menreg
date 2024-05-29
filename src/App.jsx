@@ -201,9 +201,9 @@ function App() {
                 <InputCard tag="Contacts">
                   <InputField
                     type="tel"
-                    title="GSM1(Whatsapp Number): "
+                    title="GSM1 (Whatsapp Number): "
                     props={{ ...register("gsm1") }}
-                    note="In absence of a whatsapp number, please input 08133164446"
+                    note="In absence of a whatsapp number, input 08133164446"
                   />
                   {errors.gsm1 && <Error error={errors.gsm1.message} />}
                   <InputField
@@ -232,7 +232,7 @@ function App() {
                           setIsNonAG(false);
                         }}
                       />
-                      <label htmlFor="AG Member and Minister" className="px-2">
+                      <label htmlFor="AG Member and Minister" className="px-2 text-base">
                         AG Member and Minister
                       </label>
                     </div>
@@ -264,7 +264,7 @@ function App() {
                           setIsNonAG(false);
                         }}
                       />
-                      <label htmlFor="AG Member" className="px-1">
+                      <label htmlFor="AG Member" className="px-2 text-base">
                         AG Member
                       </label>
                     </div>
@@ -296,7 +296,7 @@ function App() {
                           setIsNonAG(true);
                         }}
                       />
-                      <label htmlFor="Non AG" className="px-2">
+                      <label htmlFor="Non AG" className="px-2 text-base">
                         Non AG (but wish to attend)
                       </label>
                     </div>
