@@ -136,7 +136,7 @@ function App() {
           <h1 className="text-center text-2xl font-bold my-2">
             2024 NATIONAL MEN&apos;S CONVENTION
           </h1>
-          <p className="font-bold text-center my-2">
+          <p className="font-bold text-center my-2 text-lg">
             International Worship Center, Uyo Akwa Ibom State (July 22 - 26,
             2024)
           </p>
@@ -191,7 +191,7 @@ function App() {
                     type="email"
                     title="Email: "
                     props={{ ...register("email") }}
-                    note="Please provide a valid email. In absence of a valid email, input agmensministries@gmail.com"
+                    note="In absence of an email, input agmensministries@gmail.com"
                   />
 
                   {errors.email && <Error error={errors.email.message} />}
@@ -217,7 +217,7 @@ function App() {
                 {/* MEMBERSHIP */}
                 <InputCard tag="Membership Status">
                   <div className="my-2">
-                    <p className="text-[16px] font-semibold">
+                    <p className="text-[15px] font-semibold">
                       What is your membership status in the Men&apos;s
                       Ministries?
                     </p>
@@ -232,7 +232,7 @@ function App() {
                           setIsNonAG(false);
                         }}
                       />
-                      <label htmlFor="AG Member and Minister" className="px-2 text-base">
+                      <label htmlFor="AG Member and Minister" className="px-2 text-[15px]">
                         AG Member and Minister
                       </label>
                     </div>
@@ -264,7 +264,7 @@ function App() {
                           setIsNonAG(false);
                         }}
                       />
-                      <label htmlFor="AG Member" className="px-2 text-base">
+                      <label htmlFor="AG Member" className="px-2 text-[15px]">
                         AG Member
                       </label>
                     </div>
@@ -296,7 +296,7 @@ function App() {
                           setIsNonAG(true);
                         }}
                       />
-                      <label htmlFor="Non AG" className="px-2 text-base">
+                      <label htmlFor="Non AG" className="px-2 text-[15px]">
                         Non AG (but wish to attend)
                       </label>
                     </div>
@@ -318,7 +318,7 @@ function App() {
                 {/* ACCOMMODATION */}
                 <InputCard tag="Accommodation">
                   <div className="my-2">
-                    <p className="text-[16px] font-semibold">
+                    <p className="text-[15px] font-semibold">
                       What type of accommodation do you want?
                     </p>
                     <div
@@ -333,17 +333,17 @@ function App() {
                         value="Hostel"
                         {...register("accommodation.value")}
                       />
-                      <label htmlFor="hostel" className="px-2">
+                      <label htmlFor="hostel" className="px-2 text-[15px]">
                         Hostel
                       </label>
                     </div>
                     {hostel && (
                       <>
                         <div className="my-2">
-                          <h3 className="font-normal italic">
+                          <h3 className="font-normal italic text-[14px]">
                             Hostel Details:
                           </h3>
-                          <p className="italic">
+                          <p className="italic text-[14px]">
                             Open Halls @ ₦7,000 only throughout the Convention
                             period include churches and hostels. Provision of
                             Electricity, Foam and pillow, security and
@@ -352,13 +352,13 @@ function App() {
                         </div>
                         <hr />
                         <div className="my-2">
-                          <p className="underline italic">
+                          <p className="underline italic text-[14px]">
                             Payment for Accommodation
                           </p>
-                          <p className="italic">LOC Account Details</p>
-                          <p className="font-normal italic">Archibong Ekong</p>
-                          <p className="font-normal italic">Fidelity Bank</p>
-                          <p className="font-normal italic">6230493752</p>
+                          <p className="italic text-[14px]">LOC Account Details</p>
+                          <p className="font-normal italic text-[14px]">Archibong Ekong</p>
+                          <p className="font-normal italic text-[14px]">Fidelity Bank</p>
+                          <p className="font-normal italic text-[14px]">6230493752</p>
                         </div>
                       </>
                     )}
@@ -376,7 +376,7 @@ function App() {
                         name="accommodation"
                         {...register("accommodation.value")}
                       />
-                      <label htmlFor="hotel" className="px-2">
+                      <label htmlFor="hotel" className="px-2 text-[15px]">
                         Hotel
                       </label>
                     </div>
@@ -404,26 +404,26 @@ function App() {
                         {selectedHotel && (
                           <>
                             <div className="my-2">
-                              <h3 className="font-normal italic">
+                              <h3 className="font-normal italic text-[14px]">
                                 Selected Hotel Description:
                               </h3>
-                              <p className="italic">
+                              <p className="italic text-[14px]">
                                 {selectedHotel.description}
                               </p>
                             </div>
                             <hr />
                             <div className="my-2">
-                              <p className="underline italic">
+                              <p className="underline italic text-[14px]">
                                 Payment for Accommodation
                               </p>
-                              <p className="italic">LOC Account Details</p>
-                              <p className="font-normal italic">
+                              <p className="italic text-[14px]">LOC Account Details</p>
+                              <p className="font-normal italic text-[14px]">
                                 Archibong Ekong
                               </p>
-                              <p className="font-normal italic">
+                              <p className="font-normal italic text-[14px]">
                                 Fidelity Bank
                               </p>
-                              <p className="font-normal italic">6230493752</p>
+                              <p className="font-normal italic text-[14px]">6230493752</p>
                             </div>
                           </>
                         )}
@@ -442,7 +442,7 @@ function App() {
                         value="Personal Arrangement"
                         {...register("accommodation.value")}
                       />
-                      <label htmlFor="Personal Arrangement" className="px-2">
+                      <label htmlFor="Personal Arrangement" className="px-2 text-[15px]">
                         Personal Arrangement
                       </label>
                     </div>
@@ -455,7 +455,7 @@ function App() {
                 {/* REGISTRATION */}
                 <InputCard tag="Registration">
                   <div className="my-2">
-                    <p className="text-[16px] font-semibold">
+                    <p className="text-[15px] font-semibold">
                       What type of registration do you want?
                     </p>
                     <div
@@ -471,18 +471,18 @@ function App() {
                         value="Regular"
                         {...register("registration")}
                       />
-                      <label htmlFor="regularReg" className="px-2">
+                      <label htmlFor="regularReg" className="px-2 text-[15px]">
                         Regular
                       </label>
                     </div>
                     {regular && (
                       <>
                         <div className="my-2">
-                          <h3 className="font-normal italic">
+                          <h3 className="font-normal italic text-[14px]">
                             Regular Package:
                           </h3>
-                          <p className="font-normal italic">Price: ₦5,000</p>
-                          <p className="font-normal italic">
+                          <p className="font-normal italic text-[14px]">Price: ₦5,000</p>
+                          <p className="font-normal italic text-[14px]">
                             Content: Conference File Jacket
                           </p>
                         </div>
@@ -504,18 +504,18 @@ function App() {
                         name="registration"
                         {...register("registration")}
                       />
-                      <label htmlFor="Executive" className="px-2">
+                      <label htmlFor="Executive" className="px-2 text-[15px]">
                         Executive
                       </label>
                     </div>
                     {hotelReg && (
                       <>
                         <div className="my-2">
-                          <h3 className="font-normal italic">
+                          <h3 className="font-normal italic text-[14px]">
                             Executive Package:
                           </h3>
-                          <p className="font-normal italic">Price: ₦15,000</p>
-                          <p className="font-normal italic">
+                          <p className="font-normal italic text-[14px]">Price: ₦15,000</p>
+                          <p className="font-normal italic text-[14px]">
                             Content: Conference Souvenir Bag/Wears/Materials,
                             file etc
                           </p>

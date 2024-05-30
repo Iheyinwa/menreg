@@ -2,10 +2,10 @@ import PropTypes from 'prop-types'
  const InputField = ({type,title, props, onChange, note}) => {
   return (
     <div className='my-2 flex flex-col gap-3 w-full'>
-      <label className="font-semibold text-[16px] inline-flex gap-2 items-center w-fit">
+      <label className="font-semibold text-[15px] inline-flex gap-2 items-center w-fit">
         {title}
       </label>
-      <p>{note}</p>
+      <p className='text-[14px]'>{note}</p>
       <input
         type={type}
         className="border-b border-b-gray-200"
