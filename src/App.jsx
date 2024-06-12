@@ -67,7 +67,7 @@ function App() {
   if (data.registration === "Regular") {
     totalAmount += 5000;
   } else {
-    totalAmount += 50000;
+    totalAmount += 15000;
   }
   console.log("Original data:", data);
 
