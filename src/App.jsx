@@ -10,7 +10,6 @@ import Select from "react-select";
 import { useState } from "react";
 import { collection, addDoc} from "firebase/firestore";
 import { db } from "./firebase";
-import PaystackPop from "@paystack/inline-js";
 import { FaSpinner } from "react-icons/fa6";
 import { districts } from "./data/districts.js";
 import { hotelAccommodations } from "./data/hotels.js";
@@ -59,73 +58,67 @@ function App() {
   const [hotelReg, setHotelReg] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [showPopup, setShowPopup] = useState(false);
+  const [amount, setAmount] = useState(0);
+  const [formData, setFormData] = useState(null);
 
   const onSubmit = async (data) => {
-  let totalAmount = 0;
-  // Registration Amount
-  if (data.registration === "Regular") {
-    totalAmount += 5000;
-  } else {
-    totalAmount += 15000;
-  }
-  console.log("Original data:", data);
+    let totalAmount = 0;
+    // Registration Amount
+    if (data.registration === "Regular") {
+      totalAmount += 5000;
+      setAmount(totalAmount)
+    } else {
+      totalAmount += 15000;
+      setAmount(totalAmount);
+    }
 
-  // Extract the value from the AGChapter select
-  const agDistrictValue = data.AGDistrict?.value || "none";
-  const accommodationValue = {
-    value: data.accommodation?.value,
+    // Extract the value from the AGChapter select
+    const agDistrictValue = data.AGDistrict?.value || "none";
+    const accommodationValue = {
+      value: data.accommodation?.value,
+    };
+    const registrationValue = {
+      value: data.registration,
+      amount: totalAmount,
+    };
+
+    const cleanedData = {
+      ...data,
+      AGDistrict: agDistrictValue,
+      accommodation: accommodationValue,
+      registration: registrationValue,
+    };
+
+    setFormData(cleanedData);
+    setIsSubmitting(true);
+    setShowPopup(true);
   };
-  const registrationValue = {
-    value: data.registration,
-    amount: totalAmount
-  };
 
-  // Create a new data object with only the necessary values
-  
+  const handlePopupSubmit = async () => {
+    setShowPopup(false);
+    console.log(formData)
 
-  setIsSubmitting(true);
-
-  const cleanedData = {
-    ...data,
-    AGDistrict: agDistrictValue,
-    accommodation: accommodationValue,
-    registration: registrationValue,
-    Payment: "Successful",
-  };
-
-  console.log(cleanedData)
-
-  const paystackKey = import.meta.env.VITE_PUBLIC_KEY
-  const paystack = new PaystackPop();
-  paystack.newTransaction({
-    key: paystackKey,
-    email: data.email,
-    amount: totalAmount * 100,
-
-    onSuccess: async () => {
-      try {
-        const userDataRef = await addDoc(collection(db, "userData"), {
-          userData: cleanedData,
-        });
-        console.log("User Data written with ID: ", userDataRef.id);
-        toast.success("Payment was successful and your form was submitted!");
-        reset(); // Reset the form only after successful submission
-      } catch (e) {
-        console.error("Error submitting information: ", e);
-        toast.error("Error submitting your data after payment.");
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    onCancel: () => {
+    try {
+      const userDataRef = await addDoc(collection(db, "userData"), {
+        userData: formData,
+      });
+      console.log("User Data written with ID: ", userDataRef.id);
+      toast.success("Form was submitted successfully!");
+      reset(); // Reset the form only after successful submission
+    } catch (e) {
+      console.error("Error submitting information: ", e);
+      toast.error("Error submitting your data.");
+    } finally {
       setIsSubmitting(false);
-      toast.error("Payment was canceled and your form was not submitted!");
-    },
-  });
-  reset();
+    }
   };
 
+  const handlePopupCancel = () => {
+    setShowPopup(false);
+    setIsSubmitting(false);
+    toast.error("Error submitting your data.");
+  };
 
 
   return (
@@ -232,7 +225,10 @@ function App() {
                           setIsNonAG(false);
                         }}
                       />
-                      <label htmlFor="AG Member and Minister" className="px-2 text-[15px]">
+                      <label
+                        htmlFor="AG Member and Minister"
+                        className="px-2 text-[15px]"
+                      >
                         AG Member and Minister
                       </label>
                     </div>
@@ -355,10 +351,18 @@ function App() {
                           <p className="underline italic text-[14px]">
                             Payment for Accommodation
                           </p>
-                          <p className="italic text-[14px]">LOC Account Details</p>
-                          <p className="font-normal italic text-[14px]">Archibong Ekong</p>
-                          <p className="font-normal italic text-[14px]">Fidelity Bank</p>
-                          <p className="font-normal italic text-[14px]">6230493752</p>
+                          <p className="italic text-[14px]">
+                            LOC Account Details
+                          </p>
+                          <p className="font-normal italic text-[14px]">
+                            Archibong Ekong
+                          </p>
+                          <p className="font-normal italic text-[14px]">
+                            Fidelity Bank
+                          </p>
+                          <p className="font-normal italic text-[14px]">
+                            6230493752
+                          </p>
                         </div>
                       </>
                     )}
@@ -416,14 +420,18 @@ function App() {
                               <p className="underline italic text-[14px]">
                                 Payment for Accommodation
                               </p>
-                              <p className="italic text-[14px]">LOC Account Details</p>
+                              <p className="italic text-[14px]">
+                                LOC Account Details
+                              </p>
                               <p className="font-normal italic text-[14px]">
                                 Archibong Ekong
                               </p>
                               <p className="font-normal italic text-[14px]">
                                 Fidelity Bank
                               </p>
-                              <p className="font-normal italic text-[14px]">6230493752</p>
+                              <p className="font-normal italic text-[14px]">
+                                6230493752
+                              </p>
                             </div>
                           </>
                         )}
@@ -442,7 +450,10 @@ function App() {
                         value="Personal Arrangement"
                         {...register("accommodation.value")}
                       />
-                      <label htmlFor="Personal Arrangement" className="px-2 text-[15px]">
+                      <label
+                        htmlFor="Personal Arrangement"
+                        className="px-2 text-[15px]"
+                      >
                         Personal Arrangement
                       </label>
                     </div>
@@ -481,7 +492,9 @@ function App() {
                           <h3 className="font-normal italic text-[14px]">
                             Regular Package:
                           </h3>
-                          <p className="font-normal italic text-[14px]">Price: ₦5,000</p>
+                          <p className="font-normal italic text-[14px]">
+                            Price: ₦5,000
+                          </p>
                           <p className="font-normal italic text-[14px]">
                             Content: Conference File Jacket
                           </p>
@@ -514,7 +527,9 @@ function App() {
                           <h3 className="font-normal italic text-[14px]">
                             Executive Package:
                           </h3>
-                          <p className="font-normal italic text-[14px]">Price: ₦15,000</p>
+                          <p className="font-normal italic text-[14px]">
+                            Price: ₦15,000
+                          </p>
                           <p className="font-normal italic text-[14px]">
                             Content: Conference Souvenir Bag/Wears/Materials,
                             file etc
@@ -550,6 +565,50 @@ function App() {
           </form>
         </section>
       </section>
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded shadow-md">
+            <p className="mb-4">
+              You&apos;re to pay a sum of ₦{amount} to the bank stated below
+            </p>
+            <div className="my-2">
+              <p className="underline text-[14px]">
+                Payment for Registration Package
+              </p>
+              <p className="font-normal text-[14px]">
+                <span className="font-bold">Account Name: </span>Men&apos;s
+                Ministries Assemblies of God
+              </p>
+              <p className="font-normal text-[14px]">
+                <span className="font-bold">Bank: </span>AG Mortgage Bank
+              </p>
+              <p className="font-normal text-[14px]">
+                {" "}
+                <span className="font-bold">Account Number: </span>0000667243
+              </p>
+              <p className="font-normal text-[14px]">
+                {" "}
+                <span className="font-bold">Narration: </span>Men&apos;s
+                Convention
+              </p>
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={handlePopupSubmit}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+              >
+                Ok
+              </button>
+              <button
+                onClick={handlePopupCancel}
+                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
